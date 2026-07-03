@@ -9,3 +9,10 @@ npm-debug.log*
 Thumbs.db
 launcher-state.json
 launcher.config.local.json
+
+# Outils / config locale (hors repo launcher)
+.claude/
+.mcp.json
+
+# Contenu non lié au launcher (déplacé/à gérer séparément)
+website/
