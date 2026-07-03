@@ -45,6 +45,7 @@ const DEFAULT_STATIC = {
   githubToken: '',
   supabase: { url: '', anonKey: '' },
   requireLogin: true,
+  downloadMode: 'supabase',
   closeLauncherOnPlay: false,
 };
 

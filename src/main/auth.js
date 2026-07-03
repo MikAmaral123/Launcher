@@ -157,6 +157,25 @@ function onAuthChange(cb) {
   };
 }
 
+/**
+ * Appelle une Edge Function Supabase avec la session du joueur (JWT) attachée.
+ * Renvoie { ok, data } ou { ok:false, error }.
+ */
+async function invokeFunction(name, body) {
+  const c = getClient();
+  if (!c) return { ok: false, error: 'Supabase non configuré.' };
+  const { data, error } = await c.functions.invoke(name, { body: body || {} });
+  if (error) {
+    let detail = error.message || 'Erreur Edge Function';
+    try {
+      const b = await error.context.json();
+      if (b && b.error) detail = b.error;
+    } catch (_) {}
+    return { ok: false, error: detail };
+  }
+  return { ok: true, data };
+}
+
 // Traduction FR des messages Supabase les plus courants
 function translate(msg) {
   const m = String(msg || '').toLowerCase();
@@ -183,4 +202,5 @@ module.exports = {
   updateUsername,
   resetPassword,
   onAuthChange,
+  invokeFunction,
 };

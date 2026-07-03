@@ -33,5 +33,8 @@
   "_comment_requireLogin": "true = le joueur doit etre connecte pour acceder au launcher.",
   "requireLogin": true,
 
+  "_comment_download": "supabase = SECURISE (Edge Function download-game verifie le login et renvoie une URL signee ; token GitHub cote serveur). github = direct (repo public, ou prive via githubToken embarque).",
+  "downloadMode": "supabase",
+
   "closeLauncherOnPlay": false
 }

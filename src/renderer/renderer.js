@@ -226,10 +226,17 @@ async function refresh() {
   S.check = c;
 
   if (!c.configured) {
-    setStatus('Repo du jeu non configuré', 'warn');
+    setStatus('Téléchargement non configuré', 'warn');
     applyMode('unconfigured', 'Config requise');
     $('news-body').innerHTML =
-      '<p class="muted">Renseigne <code>gameRepo</code> dans <b>launcher.config.json</b> pour activer les mises à jour.</p>';
+      '<p class="muted">Configure Supabase (Edge Function) ou <code>gameRepo</code> dans <b>launcher.config.json</b>.</p>';
+    return;
+  }
+
+  if (c.error) {
+    setStatus('Service de téléchargement indisponible', 'err');
+    applyMode('error', 'Réessayer');
+    $('news-body').innerHTML = `<p class="muted">${c.error}</p>`;
     return;
   }
 

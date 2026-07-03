@@ -8,6 +8,7 @@ const extract = require('extract-zip');
 
 const { getStaticConfig, getState, setState, defaultInstallDir } = require('./config');
 const { getJson, downloadToFile } = require('./download');
+const auth = require('./auth');
 
 function cfg() {
   return getStaticConfig();
@@ -36,10 +37,58 @@ function pickAsset(assets) {
   return zips.find((a) => rule.test(a.name)) || zips[0] || null;
 }
 
+function localStatusFields() {
+  const state = getState();
+  const installed = !!state.installedVersion && fs.existsSync(exePath());
+  return { state, installed };
+}
+
 /**
- * Interroge GitHub pour la derniere release du JEU.
+ * Point d'entree : renvoie l'etat de mise a jour du jeu.
+ * Deux modes selon config.downloadMode :
+ *   - "supabase" (defaut, SECURISE) : passe par l'Edge Function download-game,
+ *     qui verifie la session joueur et renvoie une URL signee temporaire.
+ *   - "github" : lit directement l'API GitHub (repo public, ou prive via token embarque).
  */
 async function checkForGameUpdate() {
+  const mode = cfg().downloadMode === 'github' ? 'github' : 'supabase';
+  return mode === 'supabase' ? checkViaEdge() : checkViaGitHub();
+}
+
+// --- Mode SECURISE : Edge Function Supabase --------------------------------
+async function checkViaEdge() {
+  if (!auth.isConfigured()) return { configured: false, reason: 'supabase' };
+
+  const res = await auth.invokeFunction('download-game', {});
+  const { installed, state } = localStatusFields();
+
+  if (!res.ok) {
+    return {
+      configured: true,
+      error: res.error,
+      installed,
+      currentVersion: state.installedVersion,
+      needsUpdate: false,
+    };
+  }
+
+  const d = res.data;
+  return {
+    configured: true,
+    latestVersion: d.version,
+    currentVersion: state.installedVersion,
+    installed,
+    needsUpdate: !installed || isDifferent(d.version, state.installedVersion),
+    // URL signee temporaire -> pas de token, hote objects.githubusercontent.com
+    asset: d.url ? { name: d.name, url: d.url, size: d.size } : null,
+    releaseNotes: d.notes || '',
+    releaseName: d.releaseName || d.version,
+    publishedAt: d.publishedAt,
+  };
+}
+
+// --- Mode direct GitHub (public, ou prive via token embarque) --------------
+async function checkViaGitHub() {
   const { owner, repo } = cfg().gameRepo;
   if (!owner || !repo || owner.startsWith('REMPLACE')) {
     return { configured: false };
@@ -51,8 +100,7 @@ async function checkForGameUpdate() {
   const release = await getJson(url, token);
   const latestVersion = release.tag_name;
   const asset = pickAsset(release.assets || []);
-  const state = getState();
-  const installed = !!state.installedVersion && fs.existsSync(exePath());
+  const { state, installed } = localStatusFields();
 
   return {
     configured: true,
@@ -79,8 +127,11 @@ async function checkForGameUpdate() {
  * onProgress({ phase, transferred, total, percent, bytesPerSec })
  */
 async function installGame(onProgress) {
+  // Re-check juste avant de telecharger : en mode supabase, ca regenere une URL
+  // signee fraiche (les URLs GitHub signees expirent en quelques minutes).
   const info = await checkForGameUpdate();
-  if (!info.configured) throw new Error('Repo du jeu non configure (launcher.config.json).');
+  if (!info.configured) throw new Error('Téléchargement non configuré (Supabase / repo du jeu).');
+  if (info.error) throw new Error(info.error);
   if (!info.asset) throw new Error('Aucune archive .zip trouvee dans la derniere release.');
 
   const dir = installDir();
