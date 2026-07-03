@@ -1,0 +1,11 @@
+<svg width="128" height="144" viewBox="0 0 64 72" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Basalt Game">
+  <title>Basalt Game — voxel / basalt-column mark</title>
+  
+  <path d="M32 2 L60 18 L32 34 L4 18 Z" fill="#63E8C0"></path>
+  
+  <path d="M4 18 L32 34 L32 70 L4 54 Z" fill="#2AA9D6"></path>
+  
+  <path d="M60 18 L32 34 L32 70 L60 54 Z" fill="#1B6E9E"></path>
+  
+  <path d="M32 2 L60 18 L32 34 L4 18 Z" stroke="#8CF2D6" stroke-width="1" stroke-opacity="0.5" fill="none"></path>
+</svg>

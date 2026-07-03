@@ -88,22 +88,81 @@ function applyMode(mode, label, btnClass) {
 // --- AUTHENTIFICATION --------------------------------------------------------
 function showAuth() {
   document.body.classList.remove('authed');
-  $('user-chip').hidden = true;
   $('auth-screen').hidden = false;
+}
+
+function paintUser(user) {
+  if (!user) return;
+  setText('user-name', user.username);
+  $('user-avatar').textContent = (user.username || '?').charAt(0).toUpperCase();
 }
 
 function enterApp(user) {
   S.user = user || null;
   $('auth-screen').hidden = true;
   document.body.classList.add('authed');
-  if (user) {
-    $('user-chip').hidden = false;
-    $('user-name').textContent = user.username;
-    $('user-avatar').textContent = (user.username || '?').charAt(0).toUpperCase();
-  }
+  paintUser(user);
   if (!S.entered) {
     S.entered = true;
     refresh();
+  }
+}
+
+// --- Navigation (Bibliothèque / Store) --------------------------------------
+function switchView(view) {
+  document.querySelectorAll('.nav-item').forEach((b) => {
+    b.classList.toggle('active', b.dataset.view === view);
+  });
+  $('view-library').hidden = view !== 'library';
+  $('view-store').hidden = view !== 'store';
+}
+
+// --- Profil -----------------------------------------------------------------
+function openProfile() {
+  const u = S.user;
+  if (!u) return;
+  $('profile-avatar').textContent = (u.username || '?').charAt(0).toUpperCase();
+  $('profile-email').textContent = u.email || '—';
+  let since = '—';
+  if (u.createdAt) {
+    try {
+      since = new Date(u.createdAt).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    } catch (_) {}
+  }
+  $('profile-since').textContent = 'Membre depuis ' + since;
+  $('profile-username').value = u.username || '';
+  $('profile-msg').hidden = true;
+  $('profile-overlay').hidden = false;
+}
+
+async function saveProfile() {
+  const name = $('profile-username').value.trim();
+  if (name.length < 2) {
+    const m = $('profile-msg');
+    m.textContent = 'Le pseudo doit faire au moins 2 caractères.';
+    m.className = 'auth-error';
+    m.hidden = false;
+    return;
+  }
+  $('btn-save-profile').disabled = true;
+  const r = await api.auth.updateUsername(name);
+  $('btn-save-profile').disabled = false;
+  const m = $('profile-msg');
+  if (r.ok) {
+    S.user = r.user;
+    paintUser(r.user);
+    m.textContent = 'Profil mis à jour ✦';
+    m.className = 'auth-note';
+    m.hidden = false;
+    toast('Profil mis à jour');
+  } else {
+    m.textContent = r.error || 'Échec de la mise à jour.';
+    m.className = 'auth-error';
+    m.hidden = false;
   }
 }
 
@@ -411,11 +470,29 @@ window.addEventListener('DOMContentLoaded', () => {
   $('auth-form').addEventListener('submit', onAuthSubmit);
   $('auth-forgot').addEventListener('click', onForgot);
   $('btn-logout').addEventListener('click', async () => {
+    $('profile-overlay').hidden = true;
     await api.auth.signOut();
     S.entered = false;
     S.check = null;
+    switchView('library');
     showAuth();
   });
+
+  // --- Navigation (menu vertical)
+  $('nav-library').addEventListener('click', () => switchView('library'));
+  $('nav-store').addEventListener('click', () => switchView('store'));
+
+  // --- Profil
+  $('profile-card').addEventListener('click', openProfile);
+  $('profile-close').addEventListener('click', () => ($('profile-overlay').hidden = true));
+  $('profile-overlay').addEventListener('click', (e) => {
+    if (e.target.id === 'profile-overlay') $('profile-overlay').hidden = true;
+  });
+  $('btn-save-profile').addEventListener('click', saveProfile);
+  $('profile-username').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') saveProfile();
+  });
+
   api.auth.onChange((user) => {
     if (user) enterApp(user);
     else {

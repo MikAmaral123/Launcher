@@ -1,0 +1,4 @@
+{ "version":"0.0.1","configurations":[
+  { "name":"website","runtimeExecutable":"node",
+    "runtimeArgs":["C:/Users/micka/AppData/Local/Temp/claude/C--Users-micka-Desktop-DevProjects-Basalt-Game/dc5bf720-1b3f-48d0-8be6-015b22172071/scratchpad/website-server.js"],
+    "port":4611 } ] }
