@@ -48,11 +48,19 @@ const DEFAULT_STATIC = {
   closeLauncherOnPlay: false,
 };
 
+// Surcharge locale NON commitee (secrets: token GitHub prive...).
+// Cherchee a cote de launcher.config.json (dev + prod).
+function locateLocalConfig() {
+  const base = locateStaticConfig();
+  return path.join(path.dirname(base), 'launcher.config.local.json');
+}
+
 let staticCache = null;
 function getStaticConfig() {
   if (staticCache) return staticCache;
   const file = locateStaticConfig();
-  staticCache = Object.assign({}, DEFAULT_STATIC, readJsonSafe(file, {}));
+  const local = readJsonSafe(locateLocalConfig(), {});
+  staticCache = Object.assign({}, DEFAULT_STATIC, readJsonSafe(file, {}), local);
   return staticCache;
 }
 

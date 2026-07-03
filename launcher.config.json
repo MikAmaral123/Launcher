@@ -12,7 +12,7 @@
   "_comment_game": "Repo GitHub qui heberge les releases DU JEU. Le launcher lit la derniere release ici.",
   "gameRepo": {
     "owner": "MikAmaral123",
-    "repo": "my-universe"
+    "repo": "MyUniverse-Release"
   },
 
   "_comment_asset": "Regle de selection de l'archive du jeu dans les assets de la release. Le launcher prend le 1er asset dont le nom matche assetMatch (regex, insensible a la casse). Doit etre un .zip.",
@@ -21,7 +21,7 @@
   "_comment_exe": "Chemin de l'executable du jeu, relatif au dossier d'installation (apres extraction du zip).",
   "gameExecutable": "My Universe.exe",
 
-  "_comment_token": "Optionnel: laisse vide pour un repo PUBLIC. Pour un repo PRIVE, colle un fine-grained token GitHub avec droit lecture 'Contents'. (Sera stocke localement uniquement.)",
+  "_comment_token": "NE PAS mettre le token ici (ce fichier est commite dans le repo launcher PUBLIC). Mets-le dans launcher.config.local.json (gitignore) qui surcharge cette valeur. Laisse vide ici.",
   "githubToken": "",
 
   "_comment_supabase": "Comptes joueurs. anonKey = cle PUBLIQUE 'anon'/'publishable' (Supabase Dashboard > Project Settings > API). Sans danger a distribuer: la RLS protege les donnees.",

@@ -25,6 +25,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Injecte le token de lecture du repo PRIVE du jeu depuis un secret du repo.
+      # (Reglages -> Secrets and variables -> Actions -> New secret : GAME_DOWNLOAD_TOKEN)
+      # Le fichier n'est jamais commite ; il est cree a la volee ici et embarque dans le build.
+      - name: Inject game download token
+        shell: bash
+        run: |
+          echo '{ "githubToken": "${{ secrets.GAME_DOWNLOAD_TOKEN }}" }' > launcher.config.local.json
+
       - name: Build & publish (electron-builder -> GitHub Releases)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

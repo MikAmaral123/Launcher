@@ -61,7 +61,12 @@ async function checkForGameUpdate() {
     installed,
     needsUpdate: !installed || isDifferent(latestVersion, state.installedVersion),
     asset: asset
-      ? { name: asset.name, url: asset.browser_download_url, size: asset.size }
+      ? {
+          name: asset.name,
+          url: asset.browser_download_url, // repo public
+          apiUrl: asset.url, // repo prive (api.github.com/.../assets/ID + Accept octet-stream)
+          size: asset.size,
+        }
       : null,
     releaseNotes: release.body || '',
     releaseName: release.name || latestVersion,
@@ -85,11 +90,11 @@ async function installGame(onProgress) {
 
   const emit = (p, extra) => onProgress && onProgress(Object.assign({ phase: p }, extra));
 
-  // 1. Telechargement
+  // 1. Telechargement (repo prive -> URL API de l'asset avec token ; sinon URL publique)
+  const token = cfg().githubToken || '';
+  const dlUrl = token ? info.asset.apiUrl : info.asset.url;
   emit('download', { percent: 0, transferred: 0, total: info.asset.size });
-  await downloadToFile(info.asset.url, tmpZip, cfg().githubToken || '', (p) =>
-    emit('download', p)
-  );
+  await downloadToFile(dlUrl, tmpZip, token, (p) => emit('download', p));
 
   // 2. Nettoyage de l'ancienne install (mise a jour propre)
   emit('cleanup', { percent: 0 });

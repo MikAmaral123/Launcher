@@ -41,6 +41,10 @@
       {
         "from": "launcher.config.json",
         "to": "launcher.config.json"
+      },
+      {
+        "from": "launcher.config.local.json",
+        "to": "launcher.config.local.json"
       }
     ],
     "directories": {
