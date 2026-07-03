@@ -963,6 +963,41 @@ body:not(.authed) .app-shell {
 .view-library {
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+/* Cover du jeu en fond de la bibliothèque */
+.cover-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("assets/cover.jpg") center 30% / cover no-repeat;
+}
+.cover-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Assombrit gauche (titre) + bas (barre d'action), laisse respirer le paysage à droite */
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 7, 12, 0.92) 0%,
+      rgba(6, 7, 12, 0.55) 32%,
+      rgba(6, 7, 12, 0.12) 58%,
+      rgba(6, 7, 12, 0.35) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(6, 7, 12, 0.96) 0%,
+      rgba(6, 7, 12, 0.25) 26%,
+      transparent 52%
+    );
+}
+.view-library .stage,
+.view-library .actionbar {
+  z-index: 1;
+}
+.view-library .actionbar {
+  background: none;
 }
 
 /* ---------------------------------------------------------------- STORE VIEW */
@@ -1001,6 +1036,10 @@ body:not(.authed) .app-shell {
   background:
     radial-gradient(60% 80% at 30% 20%, rgba(255, 107, 53, 0.5), transparent),
     linear-gradient(135deg, #2a1c12, #0d0b14);
+}
+.store-card.featured .store-art {
+  background: linear-gradient(0deg, rgba(6, 7, 12, 0.65), rgba(6, 7, 12, 0.1)),
+    url("assets/cover.jpg") center 35% / cover no-repeat;
 }
 .store-art.alt {
   background: linear-gradient(135deg, #14202e, #0d0b14);
