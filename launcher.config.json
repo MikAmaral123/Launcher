@@ -1,0 +1,37 @@
+{
+  "studio": "Basalt Game",
+  "gameName": "My Universe",
+  "gameTagline": "Shape worlds. Command the divine.",
+
+  "_comment_launcher": "Repo GitHub qui heberge les releases DU LAUNCHER (auto-update de l'app elle-meme).",
+  "launcherRepo": {
+    "owner": "MikAmaral123",
+    "repo": "Launcher"
+  },
+
+  "_comment_game": "Repo GitHub qui heberge les releases DU JEU. Le launcher lit la derniere release ici.",
+  "gameRepo": {
+    "owner": "MikAmaral123",
+    "repo": "my-universe"
+  },
+
+  "_comment_asset": "Regle de selection de l'archive du jeu dans les assets de la release. Le launcher prend le 1er asset dont le nom matche assetMatch (regex, insensible a la casse). Doit etre un .zip.",
+  "assetMatch": "windows.*\\.zip$|\\.zip$",
+
+  "_comment_exe": "Chemin de l'executable du jeu, relatif au dossier d'installation (apres extraction du zip).",
+  "gameExecutable": "My Universe.exe",
+
+  "_comment_token": "Optionnel: laisse vide pour un repo PUBLIC. Pour un repo PRIVE, colle un fine-grained token GitHub avec droit lecture 'Contents'. (Sera stocke localement uniquement.)",
+  "githubToken": "",
+
+  "_comment_supabase": "Comptes joueurs. anonKey = cle PUBLIQUE 'anon'/'publishable' (Supabase Dashboard > Project Settings > API). Sans danger a distribuer: la RLS protege les donnees.",
+  "supabase": {
+    "url": "https://pbuxpxwxaoqypqgsizei.supabase.co",
+    "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBidXhweHd4YW9xeXBxZ3NpemVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwODkyOTEsImV4cCI6MjA5ODY2NTI5MX0.fbQz03t8HSrnmxxmqzXpwoYzofN49ew-riWKsj2oQzI"
+  },
+
+  "_comment_requireLogin": "true = le joueur doit etre connecte pour acceder au launcher.",
+  "requireLogin": true,
+
+  "closeLauncherOnPlay": false
+}

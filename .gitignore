@@ -1,0 +1,10 @@
+node_modules/
+release/
+dist/
+build/icon.ico
+build/icon.png
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+launcher-state.json

@@ -1,0 +1,81 @@
+{
+  "name": "basalt-launcher",
+  "productName": "Basalt Launcher",
+  "version": "1.0.0",
+  "description": "Launcher officiel de My Universe — Basalt Game",
+  "author": {
+    "name": "Basalt Game",
+    "email": "amaral.mickael.pro@gmail.com"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "icons": "node scripts/generate-icon.js",
+    "pack": "npm run icons && electron-builder --dir",
+    "dist": "npm run icons && electron-builder",
+    "release": "npm run icons && electron-builder --publish always"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.110.0",
+    "electron-updater": "^6.3.9",
+    "extract-zip": "^2.0.1",
+    "ws": "^8.21.0"
+  },
+  "build": {
+    "appId": "com.basaltgame.launcher",
+    "productName": "Basalt Launcher",
+    "copyright": "Copyright © 2026 Basalt Game",
+    "asar": true,
+    "files": [
+      "src/**/*",
+      "launcher.config.json",
+      "!**/*.map"
+    ],
+    "extraResources": [
+      {
+        "from": "launcher.config.json",
+        "to": "launcher.config.json"
+      }
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Basalt Launcher",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "MikAmaral123",
+        "repo": "Launcher"
+      }
+    ]
+  }
+}

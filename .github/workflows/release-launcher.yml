@@ -1,0 +1,31 @@
+name: Release Launcher
+
+# Déclenche la construction + publication du launcher quand tu pousses un tag "v*".
+# Ex :  git tag v1.0.1 && git push origin v1.0.1
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write # nécessaire pour créer la Release et y attacher l'installeur
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build & publish (electron-builder -> GitHub Releases)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run release
