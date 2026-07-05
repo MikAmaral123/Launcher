@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Universe — Télécharger le launcher · Basalt Game</title>
+    <meta
+      name="description"
+      content="Télécharge le launcher officiel de My Universe, le god-sim stylized fantasy du studio Basalt Game. Mise à jour automatique."
+    />
+    <meta property="og:title" content="My Universe — Basalt Game" />
+    <meta property="og:description" content="Télécharge le launcher officiel de My Universe." />
+    <meta property="og:image" content="cover.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --basalt-950: #06070c;
+        --basalt-900: #0a0b12;
+        --basalt-850: #0f111b;
+        --panel: rgba(18, 20, 32, 0.66);
+        --panel-line: rgba(232, 177, 76, 0.18);
+        --gold: #e8b14c;
+        --gold-bright: #ffd98a;
+        --gold-deep: #b9812f;
+        --ember: #ff6b35;
+        --divine: #7bc0ff;
+        --text: #ecdfe6;
+        --text-strong: #fff6ea;
+        --muted: #9aa0b5;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        color: var(--text);
+        background: var(--basalt-950);
+        overflow-x: hidden;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      [hidden] {
+        display: none !important;
+      }
+
+      /* ---------- BACKGROUND ---------- */
+      .hero-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: url("cover.jpg") center 28% / cover no-repeat;
+      }
+      .hero-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(120% 90% at 50% 30%, transparent 40%, rgba(6, 7, 12, 0.7) 100%),
+          linear-gradient(
+            90deg,
+            rgba(6, 7, 12, 0.92) 0%,
+            rgba(6, 7, 12, 0.55) 34%,
+            rgba(6, 7, 12, 0.2) 62%,
+            rgba(6, 7, 12, 0.5) 100%
+          ),
+          linear-gradient(0deg, rgba(6, 7, 12, 0.98) 4%, rgba(6, 7, 12, 0.25) 34%, transparent 60%);
+      }
+      .embers {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .ember {
+        position: absolute;
+        bottom: -10px;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--gold-bright), var(--ember));
+        box-shadow: 0 0 6px 1px rgba(255, 150, 70, 0.7);
+        animation: rise linear infinite;
+      }
+      @keyframes rise {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+        12% {
+          opacity: 0.9;
+        }
+        100% {
+          transform: translateY(-105vh) translateX(40px);
+          opacity: 0;
+        }
+      }
+
+      /* ---------- LAYOUT ---------- */
+      .wrap {
+        position: relative;
+        z-index: 2;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      header.nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px 40px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+        filter: drop-shadow(0 0 8px rgba(232, 177, 76, 0.55));
+      }
+      .brand-text {
+        font-weight: 700;
+        letter-spacing: 3px;
+        font-size: 14px;
+        color: var(--gold-bright);
+      }
+      .nav-link {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        transition: color 0.15s;
+        background: none;
+        border: 0;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .nav-link:hover {
+        color: var(--gold-bright);
+      }
+      .nav-link svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+
+      /* ---------- HERO ---------- */
+      .hero {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 20px 40px 60px;
+      }
+      .kicker {
+        font-size: 13px;
+        letter-spacing: 4px;
+        font-weight: 600;
+        color: var(--gold);
+        margin-bottom: 16px;
+      }
+      .title {
+        display: inline-block;
+        max-width: 100%;
+        padding-right: 0.12em;
+        font-family: "Cinzel", serif;
+        font-weight: 900;
+        font-size: clamp(52px, 9vw, 108px);
+        line-height: 0.95;
+        background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 45%, var(--gold-deep) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 80px rgba(232, 177, 76, 0.3);
+        filter: drop-shadow(0 8px 26px rgba(255, 130, 60, 0.28));
+      }
+      .studio {
+        margin-top: 6px;
+        font-size: 15px;
+        letter-spacing: 2px;
+        color: var(--muted);
+      }
+      .studio b {
+        color: var(--text-strong);
+        font-weight: 600;
+      }
+      .tagline {
+        margin-top: 22px;
+        font-size: 19px;
+        line-height: 1.6;
+        color: var(--text);
+        opacity: 0.9;
+        max-width: 500px;
+      }
+
+      /* ---------- DOWNLOAD ---------- */
+      .cta {
+        margin-top: 38px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        flex-wrap: wrap;
+      }
+      .dl-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        padding: 19px 38px;
+        border-radius: 15px;
+        font-family: "Cinzel", serif;
+        font-weight: 700;
+        font-size: 19px;
+        letter-spacing: 1px;
+        color: #1a1206;
+        background: linear-gradient(180deg, var(--gold-bright), var(--gold) 55%, var(--gold-deep));
+        box-shadow: 0 10px 30px rgba(232, 140, 50, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+        transition: transform 0.13s, box-shadow 0.2s;
+        overflow: hidden;
+      }
+      .dl-btn::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -60%;
+        width: 40%;
+        height: 100%;
+        background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+        transform: skewX(-20deg);
+        animation: sheen 4.5s ease-in-out infinite;
+      }
+      @keyframes sheen {
+        0%,
+        60% {
+          left: -60%;
+        }
+        85%,
+        100% {
+          left: 150%;
+        }
+      }
+      .dl-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 38px rgba(232, 140, 50, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      }
+      .dl-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: #1a1206;
+      }
+      .dl-meta {
+        font-size: 13.5px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .dl-meta b {
+        color: var(--text-strong);
+        font-weight: 600;
+      }
+      .dl-meta .up {
+        color: var(--divine);
+      }
+
+      /* ---------- FEATURES ---------- */
+      .features {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        padding: 0 40px 40px;
+        max-width: 980px;
+      }
+      .feat {
+        display: flex;
+        gap: 13px;
+        padding: 18px;
+        border-radius: 14px;
+        background: var(--panel);
+        border: 1px solid var(--panel-line);
+        backdrop-filter: blur(12px);
+      }
+      .feat-ico {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, rgba(232, 177, 76, 0.2), rgba(232, 177, 76, 0.05));
+        border: 1px solid var(--panel-line);
+      }
+      .feat-ico svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: var(--gold-bright);
+        stroke-width: 1.6;
+      }
+      .feat h3 {
+        font-size: 14.5px;
+        color: var(--text-strong);
+        margin-bottom: 3px;
+      }
+      .feat p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      footer {
+        position: relative;
+        z-index: 2;
+        padding: 22px 40px 30px;
+        font-size: 13px;
+        color: var(--muted);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      /* ---------- AUTH MODAL ---------- */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: grid;
+        place-items: center;
+        background: rgba(3, 4, 8, 0.66);
+        backdrop-filter: blur(5px);
+        padding: 20px;
+      }
+      .modal {
+        position: relative;
+        width: 400px;
+        max-width: 100%;
+        padding: 28px 28px 24px;
+        border-radius: 18px;
+        background: rgba(15, 17, 27, 0.96);
+        border: 1px solid var(--panel-line);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+      }
+      .modal-x {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 30px;
+        height: 30px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 20px;
+        cursor: pointer;
+      }
+      .modal-x:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
+      .modal h2 {
+        font-family: "Cinzel", serif;
+        font-size: 22px;
+        color: var(--gold-bright);
+        margin-bottom: 16px;
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 11px;
+        background: rgba(0, 0, 0, 0.3);
+        margin-bottom: 16px;
+      }
+      .tab {
+        flex: 1;
+        padding: 9px 0;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 13.5px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .tab.active {
+        background: linear-gradient(180deg, rgba(232, 177, 76, 0.2), rgba(232, 177, 76, 0.06));
+        color: var(--gold-bright);
+        box-shadow: inset 0 0 0 1px var(--panel-line);
+      }
+      .fld {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 12px;
+      }
+      .fld label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .fld input {
+        height: 42px;
+        padding: 0 13px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.3);
+        color: var(--text-strong);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+      }
+      .fld input:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(232, 177, 76, 0.15);
+      }
+      .msg {
+        padding: 9px 12px;
+        border-radius: 9px;
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+      .msg.err {
+        color: #ffd6da;
+        background: rgba(255, 93, 108, 0.12);
+        border: 1px solid rgba(255, 93, 108, 0.4);
+      }
+      .msg.ok {
+        color: #cdeede;
+        background: rgba(95, 230, 160, 0.1);
+        border: 1px solid rgba(95, 230, 160, 0.35);
+      }
+      .a-submit {
+        width: 100%;
+        height: 46px;
+        margin-top: 4px;
+        border: 0;
+        border-radius: 11px;
+        cursor: pointer;
+        font-family: "Cinzel", serif;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: 1px;
+        color: #1a1206;
+        background: linear-gradient(180deg, var(--gold-bright), var(--gold) 55%, var(--gold-deep));
+        box-shadow: 0 8px 20px rgba(232, 140, 50, 0.35);
+      }
+      .a-submit:disabled {
+        filter: grayscale(0.5) brightness(0.75);
+        cursor: default;
+      }
+      .logged-box {
+        text-align: center;
+      }
+      .logged-avatar {
+        width: 56px;
+        height: 56px;
+        margin: 4px auto 12px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1206;
+        background: linear-gradient(180deg, var(--gold-bright), var(--gold-deep));
+      }
+      .logged-box .who {
+        font-size: 16px;
+        color: var(--text-strong);
+        font-weight: 600;
+      }
+      .logged-box .mail {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 18px;
+      }
+      .btn-logout {
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 93, 108, 0.4);
+        background: transparent;
+        color: #ff8f9a;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .btn-logout:hover {
+        background: rgba(255, 93, 108, 0.12);
+      }
+
+      @media (max-width: 640px) {
+        header.nav,
+        .hero,
+        .features,
+        footer {
+          padding-left: 22px;
+          padding-right: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero-bg"></div>
+    <div class="embers" id="embers"></div>
+
+    <div class="wrap">
+      <header class="nav">
+        <div class="brand">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <defs>
+              <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ffd98a" />
+                <stop offset="1" stop-color="#e8853c" />
+              </linearGradient>
+            </defs>
+            <polygon
+              points="16,2 28,9 28,23 16,30 4,23 4,9"
+              fill="none"
+              stroke="url(#bm)"
+              stroke-width="1.6"
+              stroke-linejoin="round"
+            />
+            <circle cx="16" cy="16" r="4.4" fill="url(#bm)" />
+          </svg>
+          <span class="brand-text">BASALT&nbsp;GAME</span>
+        </div>
+        <button class="nav-link" id="account-btn">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z" />
+          </svg>
+          <span id="account-label">Se connecter</span>
+        </button>
+      </header>
+
+      <section class="hero">
+        <div class="kicker">GOD-SIM · STYLIZED&nbsp;FANTASY</div>
+        <h1 class="title">My&nbsp;Universe</h1>
+        <div class="studio">un jeu de <b>Basalt Game</b></div>
+        <p class="tagline">
+          Façonne des mondes, commande le divin. Télécharge le launcher officiel — il se met à jour
+          tout seul et te tient à jour de chaque nouvelle version du jeu.
+        </p>
+
+        <div class="cta">
+          <a class="dl-btn" id="dl-btn" href="BasaltLauncher-Setup.exe" download="BasaltLauncher-Setup.exe">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v10m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" fill="none" stroke="#1a1206" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Télécharger
+          </a>
+          <div class="dl-meta">
+            <div>Windows 10/11 · <b>Alpha gratuite</b> · <b>~80 Mo</b></div>
+            <div class="up">✦ Mise à jour automatique une fois lancé</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="features">
+        <div class="feat">
+          <div class="feat-ico">
+            <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 10-2.3 5.6M20 12V7m0 5h-5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </div>
+          <div>
+            <h3>Mise à jour auto</h3>
+            <p>Installe une fois. Le launcher et le jeu se mettent à jour seuls.</p>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat-ico">
+            <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke-linejoin="round" /><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </div>
+          <div>
+            <h3>Compte joueur sécurisé</h3>
+            <p>Connexion protégée, téléchargements réservés aux joueurs.</p>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat-ico">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke-linecap="round" /></svg>
+          </div>
+          <div>
+            <h3>God-sim fantasy</h3>
+            <p>Crée, gouverne et fais vivre ton propre univers.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <span>© 2026 Basalt Game — My Universe</span>
+        <span>Windows · Installeur signé prochainement</span>
+      </footer>
+    </div>
+
+    <!-- Modale compte -->
+    <div class="modal-overlay" id="auth-overlay" hidden>
+      <div class="modal">
+        <button class="modal-x" id="auth-x" aria-label="Fermer">×</button>
+        <div id="auth-form-box">
+          <h2 id="auth-h">Connexion</h2>
+          <div class="tabs">
+            <button class="tab active" id="tab-login">Connexion</button>
+            <button class="tab" id="tab-signup">Inscription</button>
+          </div>
+          <div class="fld" id="fld-user" hidden>
+            <label for="a-user">Pseudo</label>
+            <input id="a-user" maxlength="24" placeholder="TonPseudo" />
+          </div>
+          <div class="fld">
+            <label for="a-email">Email</label>
+            <input id="a-email" type="email" placeholder="toi@exemple.com" />
+          </div>
+          <div class="fld">
+            <label for="a-pass">Mot de passe</label>
+            <input id="a-pass" type="password" placeholder="••••••••" />
+          </div>
+          <div class="msg err" id="a-err" hidden></div>
+          <div class="msg ok" id="a-ok" hidden></div>
+          <button class="a-submit" id="a-submit">Se connecter</button>
+        </div>
+        <div class="logged-box" id="auth-logged" hidden>
+          <div class="logged-avatar" id="lg-avatar">?</div>
+          <div class="who" id="lg-who">—</div>
+          <div class="mail" id="lg-mail">—</div>
+          <button class="btn-logout" id="a-logout">Se déconnecter</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Braises
+      const embersBox = document.getElementById('embers');
+      for (let i = 0; i < 16; i++) {
+        const e = document.createElement('div');
+        e.className = 'ember';
+        e.style.left = Math.random() * 100 + '%';
+        e.style.animationDuration = 8 + Math.random() * 9 + 's';
+        e.style.animationDelay = -Math.random() * 14 + 's';
+        e.style.opacity = 0.4 + Math.random() * 0.5;
+        embersBox.appendChild(e);
+      }
+
+      // Son de clic UI sur les boutons/liens
+      document.addEventListener('click', (ev) => {
+        if (ev.target.closest('button, a')) {
+          const a = new Audio('click.mp3');
+          a.volume = 0.5;
+          a.play().catch(() => {});
+        }
+      });
+    </script>
+
+    <script type="module">
+      import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+      const supabase = createClient(
+        'https://pbuxpxwxaoqypqgsizei.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBidXhweHd4YW9xeXBxZ3NpemVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwODkyOTEsImV4cCI6MjA5ODY2NTI5MX0.fbQz03t8HSrnmxxmqzXpwoYzofN49ew-riWKsj2oQzI'
+      );
+      const $ = (id) => document.getElementById(id);
+      let mode = 'login';
+
+      function setMode(m) {
+        mode = m;
+        $('tab-login').classList.toggle('active', m === 'login');
+        $('tab-signup').classList.toggle('active', m === 'signup');
+        $('fld-user').hidden = m !== 'signup';
+        $('auth-h').textContent = m === 'signup' ? 'Créer un compte' : 'Connexion';
+        $('a-submit').textContent = m === 'signup' ? 'Créer mon compte' : 'Se connecter';
+        $('a-err').hidden = true;
+        $('a-ok').hidden = true;
+      }
+      const err = (t) => {
+        $('a-err').textContent = t;
+        $('a-err').hidden = false;
+        $('a-ok').hidden = true;
+      };
+      const ok = (t) => {
+        $('a-ok').textContent = t;
+        $('a-ok').hidden = false;
+        $('a-err').hidden = true;
+      };
+      function tr(m) {
+        m = (m || '').toLowerCase();
+        if (m.includes('invalid login')) return 'Email ou mot de passe incorrect.';
+        if (m.includes('already')) return 'Un compte existe déjà avec cet email.';
+        if (m.includes('password should')) return 'Mot de passe : 6 caractères minimum.';
+        if (m.includes('invalid email') || m.includes('unable to validate')) return 'Email invalide.';
+        return m;
+      }
+
+      async function render() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const logged = !!session;
+        $('auth-form-box').hidden = logged;
+        $('auth-logged').hidden = !logged;
+        if (logged) {
+          const u = session.user;
+          const name = (u.user_metadata && u.user_metadata.username) || u.email.split('@')[0];
+          $('lg-avatar').textContent = name.charAt(0).toUpperCase();
+          $('lg-who').textContent = name;
+          $('lg-mail').textContent = u.email;
+          $('account-label').textContent = name;
+        } else {
+          $('account-label').textContent = 'Se connecter';
+        }
+      }
+
+      async function submit() {
+        $('a-err').hidden = true;
+        $('a-ok').hidden = true;
+        const email = $('a-email').value.trim();
+        const pass = $('a-pass').value;
+        const user = $('a-user').value.trim();
+        if (!email || !pass) return err('Renseigne ton email et ton mot de passe.');
+        if (mode === 'signup' && pass.length < 6)
+          return err('Mot de passe : 6 caractères minimum.');
+        $('a-submit').disabled = true;
+        const res =
+          mode === 'signup'
+            ? await supabase.auth.signUp({
+                email,
+                password: pass,
+                options: { data: { username: user || email.split('@')[0] } },
+              })
+            : await supabase.auth.signInWithPassword({ email, password: pass });
+        $('a-submit').disabled = false;
+        if (res.error) return err(tr(res.error.message));
+        if (!res.data.session) {
+          ok('Compte créé ✦ Vérifie ta boîte mail, puis connecte-toi.');
+          setMode('login');
+          return;
+        }
+        ok(mode === 'signup' ? 'Compte créé ✦' : 'Connecté ✦');
+        await render();
+        setTimeout(() => ($('auth-overlay').hidden = true), 700);
+      }
+
+      $('account-btn').addEventListener('click', () => {
+        $('auth-overlay').hidden = false;
+        render();
+      });
+      $('auth-x').addEventListener('click', () => ($('auth-overlay').hidden = true));
+      $('auth-overlay').addEventListener('click', (e) => {
+        if (e.target.id === 'auth-overlay') $('auth-overlay').hidden = true;
+      });
+      $('tab-login').addEventListener('click', () => setMode('login'));
+      $('tab-signup').addEventListener('click', () => setMode('signup'));
+      $('a-submit').addEventListener('click', submit);
+      $('a-pass').addEventListener('keydown', (e) => e.key === 'Enter' && submit());
+      $('a-logout').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        render();
+      });
+      supabase.auth.onAuthStateChange(() => render());
+      setMode('login');
+      render();
+    </script>
+  </body>
+</html>

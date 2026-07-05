@@ -16,3 +16,7 @@ launcher.config.local.json
 
 # Contenu non lié au launcher (déplacé/à gérer séparément)
 website/
+
+# Installeur hébergé sur le site (trop lourd pour git)
+site/*.exe
+site/.vercel/

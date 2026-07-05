@@ -168,6 +168,57 @@ svg {
   gap: 2px;
   -webkit-app-region: no-drag;
 }
+
+/* Contrôle audio (mute + volume) */
+.audio-ctl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 8px;
+  padding-right: 10px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-app-region: no-drag;
+}
+.audio-ctl .vol-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--gold);
+}
+.audio-ctl .mute-x {
+  display: none;
+}
+.audio-ctl.muted .vol-ic {
+  color: var(--muted);
+}
+.audio-ctl.muted .wave {
+  display: none;
+}
+.audio-ctl.muted .mute-x {
+  display: block;
+}
+.vol-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 74px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.16);
+  outline: none;
+  cursor: pointer;
+}
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  box-shadow: 0 0 6px rgba(232, 177, 76, 0.6);
+  cursor: pointer;
+}
+.audio-ctl.muted .vol-slider::-webkit-slider-thumb {
+  background: var(--muted);
+  box-shadow: none;
+}
 .win-btn {
   width: 34px;
   height: 28px;
@@ -1075,6 +1126,38 @@ body:not(.authed) .app-shell {
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--panel-line);
+}
+button.store-badge {
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.12s, filter 0.15s;
+}
+button.store-badge.add:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+.store-badge.owned {
+  background: rgba(95, 230, 160, 0.15);
+  color: #7ff0b6;
+  border: 1px solid rgba(95, 230, 160, 0.4);
+  cursor: default;
+}
+.store-art {
+  position: relative;
+}
+.store-art-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 9px;
+  border-radius: 20px;
+  color: #1a1206;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* ---------------------------------------------------------------- PROFILE MODAL */

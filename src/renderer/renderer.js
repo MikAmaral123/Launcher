@@ -19,6 +19,7 @@ const S = {
   user: null,
   authMode: 'login', // login | signup
   entered: false, // le launcher a-t-il deja demarre (evite double refresh)
+  owned: false, // le joueur possède-t-il le jeu ?
 };
 
 // --- Helpers UI -------------------------------------------------------------
@@ -35,6 +36,57 @@ function toast(msg, isErr) {
   clearTimeout(toast._t);
   toast._t = setTimeout(() => (t.hidden = true), 3800);
 }
+
+// --- Audio (musique de thème + sons de clic) --------------------------------
+const Sound = {
+  theme: null,
+  volume: 0.5,
+  muted: false,
+  started: false,
+  init() {
+    const v = parseFloat(localStorage.getItem('bl_vol'));
+    this.volume = isNaN(v) ? 0.5 : v;
+    this.muted = localStorage.getItem('bl_muted') === '1';
+    this.theme = new Audio('assets/theme.mp3');
+    this.theme.loop = true;
+    this.theme.volume = this.muted ? 0 : this.volume;
+    this.applyUI();
+  },
+  start() {
+    if (!this.theme) return;
+    this.theme.play().then(() => (this.started = true)).catch(() => {});
+  },
+  setVolume(v) {
+    this.volume = v;
+    localStorage.setItem('bl_vol', String(v));
+    if (v > 0 && this.muted) {
+      this.muted = false;
+      localStorage.setItem('bl_muted', '0');
+    }
+    if (this.theme) this.theme.volume = this.muted ? 0 : v;
+    this.applyUI();
+    this.start();
+  },
+  toggleMute() {
+    this.muted = !this.muted;
+    localStorage.setItem('bl_muted', this.muted ? '1' : '0');
+    if (this.theme) this.theme.volume = this.muted ? 0 : this.volume;
+    this.applyUI();
+    if (!this.muted) this.start();
+  },
+  click() {
+    if (this.muted || this.volume === 0) return;
+    const a = new Audio('assets/click.mp3');
+    a.volume = Math.min(1, this.volume * 1.25);
+    a.play().catch(() => {});
+  },
+  applyUI() {
+    const el = $('audio-ctl');
+    if (el) el.classList.toggle('muted', this.muted || this.volume === 0);
+    const s = $('vol-slider');
+    if (s) s.value = Math.round(this.volume * 100);
+  },
+};
 
 function fmtBytes(n) {
   if (!n) return '0 o';
@@ -115,6 +167,38 @@ function switchView(view) {
   });
   $('view-library').hidden = view !== 'library';
   $('view-store').hidden = view !== 'store';
+}
+
+// --- Store : possession / ajout gratuit -------------------------------------
+function updateStoreOwnership() {
+  const btn = $('store-add-btn');
+  if (!btn) return;
+  if (S.owned) {
+    btn.textContent = '✓ Dans ta bibliothèque';
+    btn.className = 'store-badge owned';
+    btn.disabled = true;
+  } else {
+    btn.textContent = 'Ajouter · Gratuit';
+    btn.className = 'store-badge add';
+    btn.disabled = false;
+  }
+}
+
+async function onStoreAdd() {
+  if (S.owned) return;
+  const btn = $('store-add-btn');
+  btn.disabled = true;
+  btn.textContent = 'Ajout…';
+  const r = await api.addToLibrary();
+  if (r.ok) {
+    S.owned = true;
+    updateStoreOwnership();
+    toast('My Universe (Alpha) ajouté à ta bibliothèque ✦');
+    await refresh();
+  } else {
+    updateStoreOwnership();
+    toast(r.error || 'Échec de l’ajout', true);
+  }
 }
 
 // --- Profil -----------------------------------------------------------------
@@ -270,6 +354,22 @@ async function boot() {
 }
 
 async function refresh() {
+  // 1. Possession du jeu (bibliothèque)
+  const own = await api.ownsGame();
+  S.owned = own.ok ? own.owned : false;
+  updateStoreOwnership();
+
+  if (!S.owned) {
+    setStatus('Ta bibliothèque est vide', 'warn');
+    $('version-line').textContent = 'Aucun jeu installé';
+    $('news-version').textContent = 'Alpha';
+    $('news-body').innerHTML =
+      '<p class="muted">Tu ne possèdes pas encore <b>My Universe</b>.<br><br>Rends-toi dans le <b>Store</b> pour ajouter <b>gratuitement</b> l’<b>Alpha</b> à ta bibliothèque. (Version Alpha gratuite — le jeu final ne l’est pas.)</p>';
+    applyMode('gotostore', 'Ouvrir le Store');
+    return;
+  }
+
+  // 2. Possédé -> vérifie install / màj
   setStatus('Vérification des mises à jour…', 'busy');
   applyMode('busy', 'Vérification…');
 
@@ -324,6 +424,10 @@ async function refresh() {
 // --- Actions ----------------------------------------------------------------
 async function onPlayClick() {
   if (S.busy) return;
+
+  if (S.mode === 'gotostore') {
+    return switchView('store');
+  }
 
   if (S.mode === 'play') {
     const r = await api.playGame();
@@ -434,6 +538,22 @@ window.addEventListener('DOMContentLoaded', () => {
     box.appendChild(e);
   }
 
+  // --- Audio
+  Sound.init();
+  Sound.start(); // autoplay autorisé (webPreferences.autoplayPolicy)
+  // Fallback : démarre la musique au 1er geste si l'autoplay a été bloqué
+  const kick = () => {
+    if (!Sound.started) Sound.start();
+    if (Sound.started) window.removeEventListener('pointerdown', kick);
+  };
+  window.addEventListener('pointerdown', kick);
+  $('btn-mute').addEventListener('click', () => Sound.toggleMute());
+  $('vol-slider').addEventListener('input', (e) => Sound.setVolume(e.target.value / 100));
+  // Son de clic sur n'importe quel bouton
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('button')) Sound.click();
+  });
+
   $('btn-play').addEventListener('click', onPlayClick);
   $('btn-settings').addEventListener('click', openSettings);
   $('settings-close').addEventListener('click', closeSettings);
@@ -481,6 +601,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // --- Navigation (menu vertical)
   $('nav-library').addEventListener('click', () => switchView('library'));
   $('nav-store').addEventListener('click', () => switchView('store'));
+  $('store-add-btn').addEventListener('click', onStoreAdd);
 
   // --- Profil
   $('profile-card').addEventListener('click', openProfile);

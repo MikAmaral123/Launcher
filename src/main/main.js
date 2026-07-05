@@ -28,6 +28,7 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
+      autoplayPolicy: 'no-user-gesture-required',
     },
   });
 
@@ -90,6 +91,10 @@ ipcMain.handle('auth:signIn', (_e, p) => auth.signIn(p));
 ipcMain.handle('auth:signOut', () => auth.signOut());
 ipcMain.handle('auth:updateUsername', (_e, name) => auth.updateUsername(name));
 ipcMain.handle('auth:resetPassword', (_e, email) => auth.resetPassword(email));
+
+// -------- Bibliothèque / possession
+ipcMain.handle('game:owns', () => auth.ownsGame());
+ipcMain.handle('game:addToLibrary', () => auth.addToLibrary());
 
 ipcMain.handle('game:check', async () => {
   try {

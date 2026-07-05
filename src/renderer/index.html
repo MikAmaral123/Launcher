@@ -47,6 +47,32 @@
         <span class="brand-text">BASALT&nbsp;GAME</span>
       </div>
       <div class="titlebar-drag"></div>
+
+      <div class="audio-ctl" id="audio-ctl">
+        <button class="win-btn" id="btn-mute" title="Son" aria-label="Couper / activer le son">
+          <svg class="vol-ic" viewBox="0 0 24 24">
+            <path class="spk" d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none" />
+            <path
+              class="wave"
+              d="M16 8.5a5 5 0 010 7M18.6 6a9 9 0 010 12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+            <path
+              class="mute-x"
+              d="M16.5 9.5l5 5M21.5 9.5l-5 5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+        <input type="range" id="vol-slider" class="vol-slider" min="0" max="100" value="50" aria-label="Volume" />
+      </div>
+
       <div class="titlebar-controls">
         <button class="win-btn" id="btn-min" title="Réduire" aria-label="Réduire">
           <svg viewBox="0 0 12 12"><rect x="2" y="5.4" width="8" height="1.2" /></svg>
@@ -229,13 +255,14 @@
             <article class="store-card featured">
               <div class="store-art">
                 <span class="store-art-title">My&nbsp;Universe</span>
+                <span class="store-art-tag">ALPHA · GRATUIT</span>
               </div>
               <div class="store-card-body">
                 <div class="store-card-info">
                   <h3>My Universe</h3>
-                  <span class="muted small">God-sim · Jeu de base</span>
+                  <span class="muted small">God-sim · Alpha gratuite</span>
                 </div>
-                <span class="store-badge">Dans ta bibliothèque</span>
+                <button class="store-badge add" id="store-add-btn">Ajouter · Gratuit</button>
               </div>
             </article>
 

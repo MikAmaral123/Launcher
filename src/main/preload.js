@@ -7,6 +7,8 @@ contextBridge.exposeInMainWorld('launcher', {
   getBootstrap: () => ipcRenderer.invoke('app:getBootstrap'),
 
   // Jeu
+  ownsGame: () => ipcRenderer.invoke('game:owns'),
+  addToLibrary: () => ipcRenderer.invoke('game:addToLibrary'),
   checkGame: () => ipcRenderer.invoke('game:check'),
   installGame: () => ipcRenderer.invoke('game:install'),
   playGame: () => ipcRenderer.invoke('game:play'),

@@ -176,6 +176,32 @@ async function invokeFunction(name, body) {
   return { ok: true, data };
 }
 
+const GAME_ID = 'my-universe-alpha';
+
+/** Le joueur possède-t-il le jeu (dans sa bibliothèque) ? */
+async function ownsGame() {
+  const c = getClient();
+  if (!c) return { ok: false, error: 'Supabase non configuré.' };
+  const { data, error } = await c
+    .from('library')
+    .select('game')
+    .eq('game', GAME_ID)
+    .maybeSingle();
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, owned: !!data };
+}
+
+/** Ajoute le jeu (Alpha gratuite) à la bibliothèque du joueur. */
+async function addToLibrary() {
+  const c = getClient();
+  if (!c) return { ok: false, error: 'Supabase non configuré.' };
+  const { error } = await c.from('library').insert({ game: GAME_ID });
+  if (error && !/duplicate key/i.test(error.message)) {
+    return { ok: false, error: error.message };
+  }
+  return { ok: true };
+}
+
 // Traduction FR des messages Supabase les plus courants
 function translate(msg) {
   const m = String(msg || '').toLowerCase();
@@ -203,4 +229,6 @@ module.exports = {
   resetPassword,
   onAuthChange,
   invokeFunction,
+  ownsGame,
+  addToLibrary,
 };
