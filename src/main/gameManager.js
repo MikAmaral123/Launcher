@@ -183,17 +183,22 @@ function cleanDir(dir) {
 /**
  * Lance l'executable du jeu.
  */
-function launchGame() {
+function launchGame(onExit) {
   const exe = exePath();
   if (!fs.existsSync(exe)) {
     throw new Error(`Executable introuvable : ${exe}`);
   }
-  const child = spawn(exe, [], {
-    detached: true,
-    stdio: 'ignore',
-    cwd: installDir(),
-  });
-  child.unref();
+  // Pas de detach : on veut détecter la fermeture du jeu pour restaurer le launcher.
+  const child = spawn(exe, [], { stdio: 'ignore', cwd: installDir() });
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    if (typeof onExit === 'function') onExit();
+  };
+  child.on('exit', finish);
+  child.on('close', finish);
+  child.on('error', finish);
   setState({ lastPlayed: new Date().toISOString() });
   return true;
 }

@@ -90,14 +90,28 @@ function shapeUser(user) {
 
 // --- API ---------------------------------------------------------------------
 
+/** Le pseudo est-il disponible ? (via RPC, insensible à la casse) */
+async function usernameAvailable(name) {
+  const c = getClient();
+  if (!c || !name) return true;
+  const { data, error } = await c.rpc('username_available', { name });
+  if (error) return true; // en cas d'échec RPC on ne bloque pas
+  return !!data;
+}
+
 async function signUp({ email, password, username }) {
   const c = getClient();
   if (!c) return { ok: false, error: 'Supabase non configuré (launcher.config.json).' };
 
+  const uname = (username || '').trim() || email.split('@')[0];
+  if (!(await usernameAvailable(uname))) {
+    return { ok: false, error: 'Ce pseudo est déjà pris, choisis-en un autre.' };
+  }
+
   const { data, error } = await c.auth.signUp({
     email,
     password,
-    options: { data: { username: (username || '').trim() || email.split('@')[0] } },
+    options: { data: { username: uname } },
   });
   if (error) return { ok: false, error: translate(error.message) };
 
@@ -133,12 +147,32 @@ async function getCurrentUser() {
 async function updateUsername(username) {
   const c = getClient();
   if (!c) return { ok: false, error: 'Supabase non configuré.' };
-  const { data, error } = await c.auth.updateUser({ data: { username: username.trim() } });
+  const name = (username || '').trim();
+  if (name.length < 2) return { ok: false, error: 'Pseudo trop court.' };
+
+  const {
+    data: { user },
+  } = await c.auth.getUser();
+  const current = (user && user.user_metadata && user.user_metadata.username) || '';
+  if (name.toLowerCase() === current.toLowerCase()) {
+    return { ok: true, user: shapeUser(user) }; // inchangé
+  }
+
+  if (!(await usernameAvailable(name))) {
+    return { ok: false, error: 'Ce pseudo est déjà pris.' };
+  }
+
+  // profiles = source de vérité pour l'unicité (index unique)
+  const { error: pErr } = await c.from('profiles').update({ username: name }).eq('id', user.id);
+  if (pErr) {
+    return {
+      ok: false,
+      error: /duplicate|unique/i.test(pErr.message) ? 'Ce pseudo est déjà pris.' : pErr.message,
+    };
+  }
+  // synchronise les métadonnées auth
+  const { data, error } = await c.auth.updateUser({ data: { username: name } });
   if (error) return { ok: false, error: translate(error.message) };
-  // Met aussi a jour la table profiles si presente
-  try {
-    await c.from('profiles').update({ username: username.trim() }).eq('id', data.user.id);
-  } catch (_) {}
   return { ok: true, user: shapeUser(data.user) };
 }
 

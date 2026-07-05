@@ -116,9 +116,19 @@ ipcMain.handle('game:install', async () => {
 
 ipcMain.handle('game:play', () => {
   try {
-    gameManager.launchGame();
-    if (getStaticConfig().closeLauncherOnPlay) {
-      setTimeout(() => app.quit(), 800);
+    gameManager.launchGame(() => {
+      // À la fermeture du jeu : on restaure le launcher et on relance la musique
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.show();
+        mainWindow.focus();
+        mainWindow.webContents.send('game:stopped');
+      }
+    });
+    // Jeu lancé : on réduit le launcher et on coupe la musique
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('game:started');
+      mainWindow.minimize();
     }
     return { ok: true };
   } catch (e) {

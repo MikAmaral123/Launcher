@@ -50,4 +50,14 @@ contextBridge.exposeInMainWorld('launcher', {
     ipcRenderer.on('launcher:update', h);
     return () => ipcRenderer.removeListener('launcher:update', h);
   },
+  onGameStarted: (cb) => {
+    const h = () => cb();
+    ipcRenderer.on('game:started', h);
+    return () => ipcRenderer.removeListener('game:started', h);
+  },
+  onGameStopped: (cb) => {
+    const h = () => cb();
+    ipcRenderer.on('game:stopped', h);
+    return () => ipcRenderer.removeListener('game:stopped', h);
+  },
 });

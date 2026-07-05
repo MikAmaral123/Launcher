@@ -80,6 +80,13 @@ const Sound = {
     a.volume = Math.min(1, this.volume * 1.25);
     a.play().catch(() => {});
   },
+  pauseForGame() {
+    if (this.theme) this.theme.pause();
+  },
+  resumeFromGame() {
+    // Reprend seulement si le son n'avait pas été coupé manuellement
+    if (this.theme && !this.muted) this.theme.play().catch(() => {});
+  },
   applyUI() {
     const el = $('audio-ctl');
     if (el) el.classList.toggle('muted', this.muted || this.volume === 0);
@@ -167,26 +174,27 @@ function switchView(view) {
   });
   $('view-library').hidden = view !== 'library';
   $('view-store').hidden = view !== 'store';
+  if (view === 'store') closeProduct(); // toujours revenir à la liste
 }
 
-// --- Store : possession / ajout gratuit -------------------------------------
+// --- Store : possession / ajout gratuit / page produit ----------------------
 function updateStoreOwnership() {
-  const btn = $('store-add-btn');
-  if (!btn) return;
-  if (S.owned) {
-    btn.textContent = '✓ Dans ta bibliothèque';
-    btn.className = 'store-badge owned';
-    btn.disabled = true;
-  } else {
-    btn.textContent = 'Ajouter · Gratuit';
-    btn.className = 'store-badge add';
-    btn.disabled = false;
+  const badge = $('card-badge');
+  if (badge) {
+    badge.textContent = S.owned ? '✓ Bibliothèque' : 'Gratuit';
+    badge.className = 'store-badge ' + (S.owned ? 'owned' : 'add');
+  }
+  const btn = $('product-add-btn');
+  if (btn) {
+    btn.textContent = S.owned ? '✓ Dans ta bibliothèque' : 'Ajouter · Gratuit';
+    btn.className = 'store-badge ' + (S.owned ? 'owned' : 'add');
+    btn.disabled = S.owned;
   }
 }
 
 async function onStoreAdd() {
   if (S.owned) return;
-  const btn = $('store-add-btn');
+  const btn = $('product-add-btn');
   btn.disabled = true;
   btn.textContent = 'Ajout…';
   const r = await api.addToLibrary();
@@ -198,6 +206,54 @@ async function onStoreAdd() {
   } else {
     updateStoreOwnership();
     toast(r.error || 'Échec de l’ajout', true);
+  }
+}
+
+function closeProduct() {
+  $('store-detail').hidden = true;
+  $('store-list').hidden = false;
+}
+
+function openProduct(id) {
+  $('store-list').hidden = true;
+  $('store-detail').hidden = false;
+  const hero = $('product-hero');
+
+  if (id === 'extensions') {
+    hero.classList.add('alt');
+    $('product-hero-tag').textContent = 'BIENTÔT';
+    $('product-kicker').textContent = 'CONTENUS ADDITIONNELS';
+    $('product-title').textContent = 'Extensions & contenus';
+    $('product-desc').textContent =
+      'De nouveaux mondes, créatures, biomes et outils arriveront après l’Alpha. Reste connecté.';
+    $('product-add-btn').style.display = 'none';
+    $('product-notes').hidden = true;
+    return;
+  }
+
+  // My Universe
+  hero.classList.remove('alt');
+  $('product-hero-tag').textContent = 'ALPHA · GRATUIT';
+  $('product-kicker').textContent = 'COLONY-SIM · MONDE VOXEL INFINI';
+  $('product-title').textContent = (S.boot && S.boot.gameName) || 'My Universe';
+  $('product-desc').textContent = (S.boot && S.boot.gameTagline) || '';
+  $('product-add-btn').style.display = '';
+  $('product-notes').hidden = false;
+  updateStoreOwnership();
+  loadProductNotes();
+}
+
+async function loadProductNotes() {
+  const body = $('product-notes-body');
+  const ver = $('product-version');
+  body.innerHTML = '<p class="muted">Chargement des notes…</p>';
+  ver.textContent = '—';
+  const res = await api.checkGame();
+  if (res.ok && res.data && !res.data.error && res.data.configured) {
+    ver.textContent = res.data.latestVersion || '—';
+    body.innerHTML = renderMarkdown(res.data.releaseNotes);
+  } else {
+    body.innerHTML = '<p class="muted">Notes de version indisponibles pour le moment.</p>';
   }
 }
 
@@ -601,7 +657,11 @@ window.addEventListener('DOMContentLoaded', () => {
   // --- Navigation (menu vertical)
   $('nav-library').addEventListener('click', () => switchView('library'));
   $('nav-store').addEventListener('click', () => switchView('store'));
-  $('store-add-btn').addEventListener('click', onStoreAdd);
+  document.querySelectorAll('.store-card').forEach((c) => {
+    c.addEventListener('click', () => openProduct(c.dataset.product));
+  });
+  $('store-back').addEventListener('click', closeProduct);
+  $('product-add-btn').addEventListener('click', onStoreAdd);
 
   // --- Profil
   $('profile-card').addEventListener('click', openProfile);
@@ -633,6 +693,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
   api.onGameProgress(onProgress);
   api.onLauncherUpdate(onLauncherUpdate);
+  api.onGameStarted(() => Sound.pauseForGame());
+  api.onGameStopped(() => Sound.resumeFromGame());
 
   boot().catch((err) => {
     setStatus('Erreur de démarrage', 'err');

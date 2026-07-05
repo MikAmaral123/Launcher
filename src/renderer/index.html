@@ -233,11 +233,10 @@
 
             <div class="action-buttons">
               <button class="icon-btn" id="btn-settings" title="Paramètres" aria-label="Paramètres">
-                <svg viewBox="0 0 24 24">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3.2" />
                   <path
-                    d="M12 8a4 4 0 100 8 4 4 0 000-8zm8.4 4a6.6 6.6 0 00-.1-1.1l2-1.6-2-3.4-2.4 1a6.6 6.6 0 00-1.9-1.1L15.5 2h-4l-.4 2.7a6.6 6.6 0 00-1.9 1.1l-2.4-1-2 3.4 2 1.6a6.6 6.6 0 000 2.2l-2 1.6 2 3.4 2.4-1a6.6 6.6 0 001.9 1.1l.4 2.7h4l.4-2.7a6.6 6.6 0 001.9-1.1l2.4 1 2-3.4-2-1.6c.06-.36.1-.73.1-1.1z"
-                    fill="none"
-                    stroke-width="1.4"
+                    d="M19.4 13a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"
                   />
                 </svg>
               </button>
@@ -250,35 +249,67 @@
 
         <!-- ============ VUE STORE ============ -->
         <section class="view view-store" id="view-store" hidden>
-          <div class="store-head">
-            <h1>Store</h1>
-            <p class="muted">Le catalogue Basalt Game</p>
-          </div>
-          <div class="store-grid">
-            <article class="store-card featured">
-              <div class="store-art">
-                <span class="store-art-title">My&nbsp;Universe</span>
-                <span class="store-art-tag">ALPHA · GRATUIT</span>
-              </div>
-              <div class="store-card-body">
-                <div class="store-card-info">
-                  <h3>My Universe</h3>
-                  <span class="muted small">God-sim · Alpha gratuite</span>
+          <!-- Liste des produits -->
+          <div id="store-list">
+            <div class="store-head">
+              <h1>Store</h1>
+              <p class="muted">Le catalogue Basalt Game — clique un produit pour l'ouvrir</p>
+            </div>
+            <div class="store-grid">
+              <article class="store-card featured" data-product="my-universe">
+                <div class="store-art">
+                  <span class="store-art-title">My&nbsp;Universe</span>
+                  <span class="store-art-tag">ALPHA · GRATUIT</span>
                 </div>
-                <button class="store-badge add" id="store-add-btn">Ajouter · Gratuit</button>
-              </div>
-            </article>
+                <div class="store-card-body">
+                  <div class="store-card-info">
+                    <h3>My Universe</h3>
+                    <span class="muted small">Colony-sim · Alpha gratuite</span>
+                  </div>
+                  <span class="store-badge add" id="card-badge">Gratuit</span>
+                </div>
+              </article>
 
-            <article class="store-card soon">
-              <div class="store-art alt"><span class="store-art-title">?</span></div>
-              <div class="store-card-body">
-                <div class="store-card-info">
-                  <h3>Extensions &amp; contenus</h3>
-                  <span class="muted small">Bientôt disponible</span>
+              <article class="store-card soon" data-product="extensions">
+                <div class="store-art alt"><span class="store-art-title">?</span></div>
+                <div class="store-card-body">
+                  <div class="store-card-info">
+                    <h3>Extensions &amp; contenus</h3>
+                    <span class="muted small">Bientôt disponible</span>
+                  </div>
+                  <span class="store-badge ghost">Bientôt</span>
                 </div>
-                <span class="store-badge ghost">Bientôt</span>
+              </article>
+            </div>
+          </div>
+
+          <!-- Détail d'un produit -->
+          <div id="store-detail" hidden>
+            <button class="store-back" id="store-back">← Retour au Store</button>
+            <div class="product">
+              <div class="product-hero" id="product-hero">
+                <span class="product-hero-tag" id="product-hero-tag">ALPHA · GRATUIT</span>
               </div>
-            </article>
+              <div class="product-body">
+                <div class="product-head">
+                  <div>
+                    <div class="product-kicker" id="product-kicker">COLONY-SIM · MONDE VOXEL INFINI</div>
+                    <h2 id="product-title">My Universe</h2>
+                  </div>
+                  <button class="store-badge add" id="product-add-btn">Ajouter · Gratuit</button>
+                </div>
+                <p class="product-desc" id="product-desc"></p>
+                <div class="product-notes" id="product-notes">
+                  <div class="product-notes-head">
+                    <h3>Notes de version</h3>
+                    <span class="news-tag" id="product-version">—</span>
+                  </div>
+                  <div id="product-notes-body" class="news-body">
+                    <p class="muted">Chargement des notes…</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </div>
