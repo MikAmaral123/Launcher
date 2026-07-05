@@ -20,3 +20,6 @@ website/
 # Installeur hébergé sur le site (trop lourd pour git)
 site/*.exe
 site/.vercel/
+
+# Le site vit desormais dans son propre repo (Basalt-Game)
+site/

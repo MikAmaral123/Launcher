@@ -1,7 +1,7 @@
 {
   "studio": "Basalt Game",
   "gameName": "My Universe",
-  "gameTagline": "Shape worlds. Command the divine.",
+  "gameTagline": "Sème les premiers colons, laisse-les penser, apprendre et bâtir leur propre histoire dans un monde voxel infini.",
 
   "_comment_launcher": "Repo GitHub qui heberge les releases DU LAUNCHER (auto-update de l'app elle-meme).",
   "launcherRepo": {
